@@ -1,120 +1,124 @@
-// Contenitore dei risultati:
-const resultsBox = document.getElementById("results-area");
+// Replace 'YOUR_API_KEY' with your actual API key
+const apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWQ2M2NiZWEzM2ZjOTAwMTk2NTg0ZWEiLCJpYXQiOjE3MDg4ODMzMDEsImV4cCI6MTcxMDA5MjkwMX0.1D-LBvhbePOsPZg1BY3dTR_soCju1gtSGzJJehZF1HQ';
+const apiUrl = 'https://striveschool-api.herokuapp.com/api/product/';
 
-// Input post name:
-const postName = document.getElementById("post-name");
-
-// Input post description:
-const postDesc = document.getElementById("post-description");
-
-// Input post price:
-const postPrice = document.getElementById("post-price");
-
-// Alert per dati incompleti:
-const inputAlert = document.getElementById("alert-msg");
-     
-// Endpoint:
-const apiUrl = "https://striveschool-api.herokuapp.com/api/agenda";
-
-window.onload = getPosts();
-
-async function getPosts() {
-    resultsBox.innerHTML = "";
+// Function to fetch data from the API
+async function fetchData() {
     try {
-        const res = await fetch(apiUrl);
-        const json = await res.json(); // Qui avrò un array di oggetti (posts..)
-        json.forEach((post) => {
-            createPostTemplate(post);
+        const response = await fetch(apiUrl, {
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json',
+            },
         });
-        // console.log(json);
-    } catch (error) {
-        console.log(error);
-    }
-}
 
-function createPostTemplate({ name, description, price }) {
-    // Template tipo:
-    // --------------
-    // <tr>
-    //     <th>Name</th>
-    //     <td>Description</td>
-    //     <td>Price</td>
-    //     <td>
-    //         <a class="btn btn-primary btn-sm">
-    //             <i class="fa-solid fa-pencil" aria-hidden="true"></i>
-    //             <span class="ms-1">Edit</span>
-    //         </a>
-    //         <a class="btn btn-danger btn-sm ms-1">
-    //             <i class="fa-solid fa-trash" aria-hidden="true"></i>
-    //             <span class="ms-1">Delete</span>
-    //         </a>
-    //     </td>
-    // </tr>
-
-    // Istruzioni per costruire il template tramite JS:
-    let tableRow = document.createElement("tr");
-
-    let rowName = document.createElement("th");
-    rowName.innerText = name;
-    let rowDesc = document.createElement("td");
-    rowDesc.innerText = description;
-    let rowPrice = document.createElement("td");
-    rowPrice.innerText = price;
-    let rowOps = document.createElement("td");
-
-    // Tasto di modifica:
-    let editBtn = document.createElement("a");
-    editBtn.classList.add("btn", "btn-primary", "btn-sm");
-    let editImg = document.createElement("i");
-    editImg.classList.add("fa-solid", "fa-pencil");
-    let editText = document.createElement("span");
-    editText.classList.add("ms-1");
-    editText.innerText = "Edit";
-
-    editBtn.appendChild(editImg);
-    editBtn.appendChild(editText);
-
-    // Tasto di cancellazione:
-    let delBtn = document.createElement("a");
-    delBtn.classList.add("btn", "btn-danger", "btn-sm", "ms-1");
-    let delImg = document.createElement("i");
-    delImg.classList.add("fa-solid", "fa-trash");
-    let delText = document.createElement("span");
-    delText.classList.add("ms-1");
-    delText.innerText = "Delete";
-
-    delBtn.appendChild(delImg);
-    delBtn.appendChild(delText);
-
-    rowOps.appendChild(editBtn);
-    rowOps.appendChild(delBtn);
-
-    tableRow.appendChild(rowName);
-    tableRow.appendChild(rowDesc);
-    tableRow.appendChild(rowPrice);
-    tableRow.appendChild(rowOps);
-
-    resultsBox.appendChild(tableRow);
-}
-
-async function createPost() {
-    // Verifica di validazione:
-    if(postName.value && postDesc.value && postPrice.value) {
-        // Acquisisco i valori degli input per la creazione del post:
-        let newPost = { "name": postName.value, "description": postDesc.value, "price": postPrice.value, "time": new Date() };
-    
-        try {
-            const res = await fetch('https://striveschool-api.herokuapp.com/api/agenda', { method: "POST", body: JSON.stringify(newPost), headers: { "Content-type": "application/json;charset=UTF-8"}}); 
-            getPosts();
-        } catch(error) {
-            console.log(error);
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
         }
-    } else {
-        inputAlert.classList.toggle("d-none");
-        // console.log("Devi inserire tutti e 3 i campi obbligatori!");
-        setTimeout(() => {
-            inputAlert.classList.toggle("d-none");
-        }, 5000);
+
+        const data = await response.json();
+        data.forEach(updateHTML);
+    } catch (error) {
+        handleErrors(error.message);
     }
 }
+// Function to display data on the DOM
+function updateHTML(post) {
+    const resultsArea = document.getElementById('results-area');
 
+    const card = document.createElement('div');
+    card.classList.add('col');
+
+    card.innerHTML = `
+        <div class="card shadow-sm rounded" style="background-color: #1f2029">
+            <img src="${post.imageUrl}" class="bd-placeholder-img card-img-top" width="100%" height="225" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
+            <div class="card-body text-white">
+                <h5 class="card-title">${post.name}</h5>
+                <p class="card-text">${post.description}</p>
+                <p class="card-text">Price: ${post.price}</p>
+                <p class="card-text">Brand: ${post.brand}</p>
+                <p class="card-text">Id: ${post._id}</p>
+                <button class="btn btn-info btn-sm" onclick="editPost(${post.id})">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deletePost(${post.id})">Delete</button>
+            </div>
+        </div>
+    `;
+
+    resultsArea.appendChild(card);
+}
+// Function to create a new post
+async function createPost() {
+  const name = document.getElementById('post-name').value;
+  const description = document.getElementById('post-description').value;
+  const brand = document.getElementById('post-brand').value;
+  const imageUrl = document.getElementById('post-image').value;
+  const price = document.getElementById('post-price').value;
+
+  if (!name || !description || !price) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        description,
+        brand,
+        imageUrl,
+        price,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create post');
+    }
+
+    fetchData(); // Refresh data after creating a post
+
+    // Clear input fields
+    document.getElementById('post-name').value = '';
+    document.getElementById('post-description').value = '';
+    document.getElementById('post-brand').value = '';
+    document.getElementById('post-image').value = '';
+    document.getElementById('post-price').value = '';
+
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
+}
+
+// Function to edit a post
+function editPost(postId) {
+  // Implement the edit functionality based on your API
+  // You may open a modal or navigate to a new page for editing
+  console.log(`Edit post with ID: ${postId}`);
+}
+
+// Function to delete a post
+async function deletePost(postId) {
+  try {
+    const response = await fetch(`${apiUrl}/${postId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete post');
+    }
+
+    fetchData(); // Refresh data after deleting a post
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
+}
+
+// Initial fetch of data when the page loads
+fetchData();

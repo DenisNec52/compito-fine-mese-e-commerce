@@ -23,7 +23,7 @@
               aria-expanded="false"
               data-bs-toggle="dropdown"
               aria-label="Toggle theme (auto)">
-        <svg class="bi my-1 theme-icon-active" width="1em" height="1em"><use href="/Images/Logo.png"></use></svg>
+        <svg class="bi my-1 theme-icon-active" width="1em" height="1em"><a href="login\Joke\index.html"><use href="/Images/Logo.png"></use></svg></a>
         <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
       </button>
       <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
@@ -56,18 +56,40 @@
   <div class="collapse text" id="navbarHeader" style="background-color: rgb(31, 32, 41);">
     <div class="container">
       <div class="row">
-        <div class="col-sm-8 col-md-7 py-4">
-          <h4>About</h4>
-          <p class="text-body-secondary">Add some information about the album below, the author, or any other background context. Make it a few sentences long so folks can pick up some informative tidbits. Then, link them off to some social networking sites or contact information.</p>
-        </div>
-        <div class="col-sm-4 offset-md-1 py-4">
-          <h4>Contact</h4>
-          <ul class="list-unstyled">
-            <li><a href="#" class="text-white">Follow on Twitter</a></li>
-            <li><a href="#" class="text-white">Like on Facebook</a></li>
-            <li><a href="#" class="text-white">Email me</a></li>
-          </ul>
-        </div>
+        <div class="creation-area row p-3 g-0 text-center">
+          <form class="d-flex d-flex-row justify-content-center align-content-center">
+              <div class="col-3 mb-3 p-3">
+                  <label for="post-name" class="form-label">Post Name</label>
+                  <input type="text" class="form-control" id="post-name" placeholder="Enter post name..." required>
+              </div>
+              <div class="col-4 mb-3 p-3">
+                  <label for="post-description" class="form-label">Post Description</label>
+                  <input type="text" class="form-control" id="post-description" placeholder="Enter post description..." required>
+              </div>
+              <div class="col-3 mb-3 p-3">
+                  <label for="post-brand" class="form-label">Brand</label>
+                  <input type="text" class="form-control" id="post-brand" placeholder="Enter brand..." required>
+              </div>
+              <div class="col-3 mb-3 p-3">
+                  <label for="post-image" class="form-label">Image URL</label>
+                  <input type="url" class="form-control" id="post-image" placeholder="Enter image URL..." required>
+              </div>
+              <div class="col-3 mb-3 p-3">
+                  <label for="post-price" class="form-label">Post Price</label>
+                  <input type="number" class="form-control" name="post-price" id="post-price" step="1" min="0" max="100000" required>
+              </div>
+              <div class="col-12 mt-3">
+                  <button type="button" class="btn btn-success" onclick="createPost()">Create Post</button>
+              </div>
+          </form>
+      </div>
+    </div>
+    <!-- Alert per segnalare dati incompleti! -->
+    <div class="alert alert-warning d-none my-3" role="alert" id="alert-msg">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>Devi inserire tutti e 3 i campi obbligatori!</span>
+    </div>
+</div>
       </div>
     </div>
   </div>
@@ -95,15 +117,11 @@
 
 <main>
 
-  <section class="py-5 text-center container bg-light">
-    <div class="row py-lg-5">
-      <div class="col-lg-6 col-md-8 mx-auto">
-        <h1 class="fw-light">Album example</h1>
-        <p class="lead text-body-secondary">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don’t simply skip over it entirely.</p>
-        <p>
-          <a href="#" class="btn btn-primary my-2">Main call to action</a>
-          <a href="#" class="btn btn-secondary my-2">Secondary action</a>
-        </p>
+  <section class="py-5 text-center container text-light" >
+    <div class="row py-lg-5 text-light">
+      <div class="col-lg-6 col-md-8 mx-auto text-light">
+        <h1 class="fw-light text-light" >Truffiamo.it il sito piu studiato da me</h1>
+        <p class="lead text-light">Tanto tempo e impegno per la sua creazione.</p>
       </div>
     </div>
   </section>
@@ -112,7 +130,6 @@
     <div class="container">
 
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="results-area">
-        //qui finiranno i risultati
   </div>
 
 </main>
@@ -181,5 +198,6 @@
 </footer>
 <script src="/Marketplace/assets/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://kit.fontawesome.com/d6ef5c5ae1.js" crossorigin="anonymous"></script>
+<script src="script.js"></script>
     </body>
 </html>

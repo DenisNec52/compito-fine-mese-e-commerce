@@ -84,3 +84,13 @@
     height: 40px;
     width: auto;
   }
+  .d-flex.d-flex-row{
+    flex-wrap: wrap;!important
+}
+.form-label{
+  color:white
+}
+.d-block.w-100{
+  height: auto;
+  width: auto;
+}
